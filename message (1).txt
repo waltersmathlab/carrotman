@@ -1,0 +1,101 @@
+This is the private version of Cyklerbot developed by the cyklerbot team and cykler technologies.
+If you have received this file it means that you have been granted acess to contribute to this project.
+
+Things to know when developing, 
+  > A lot of the code was written poorly and variable naming was not a priority, this was back at the very beginning.
+  > Do not change any code that you are not supposed to change without consulting a developer
+  > NEVER push database, database-backup or any asociated files
+
+Database
+the entire database works off a dictionary and a key-value system.
+all databaes keys involver a prefix and a server id (guild_id), some also involve a user id
+here are all the keys you need to know.
+  > {f"i{guild_id}{user_id}"} - inventory
+  > {f"m{guild_id}{user_id}"} - money
+  > {f"xp{guild_id}{user_id}"} - xp
+  > {f"lvl{guild_id}{user_id}"} - level
+  > {f"ww{guild_id}{user_id}"} - warn wallet
+  > {f"bm{guild_id}{user_id}"} - boostedmessages
+  > {f"fsxp{guild_id}{user_id}"} - fishing xp
+  > {f"lvl{guild_id}{user_id}"} - fishing level
+  > {f"sh{guild_id}{user_id}"} - shop
+
+  > {f"{guild_id}xpearnings1"} - base message xp earnings
+  > {f"{guild_id}xpearnings1"} - max message xp earnings
+  > {f"{guild_id}xpcooldown"} - xp gain cooldown between messages
+  > {f"{guild_id}dailycommandearnings"} - base xp given on /daily
+  > {f"{guild_id}dailycommandearningsmoney"} - base money given on /daily
+
+  > {f"{guild_id}auditlogbool"} - enable/disable message audit log
+  > {f"{guild_id}auditlogchannel"} - message audit log channel
+  > {f"{guild_id}serverauditlogbool"} - enable/disable server audit log 
+  > {f"{guild_id}serverauditlogchannel} - server audit log channel
+  > {f"{guild_id}welcomechannelid"} - welcome message channel id
+  > {f"{guild_id}moderationchannelid"} - channel where moderation updates get sent
+  > {f"{guild_id}ticketchannelid"} - message where tickets get sent
+
+  > {f"{guild_id}memberrole"} - role id for member
+  > {f"{guild_id}activerole"} - role id for active
+  > {f"{guild_id}memberplusrole"} - role id for member+
+  > {f"{guild_id}prorole"} - role id for pro
+  > {f"{guild_id}masterrole"} - role id for master
+  > {f"{guild_id}eliterole"} - role id for elite
+  > {f"{guild_id}supremerole"} - role id for supreme
+  > {f"{guild_id}immortalrole"} - role id for immortal
+  > {f"{guild_id}deityrole"} - role id for deity
+  > {f"{guild_id}timeoutrole"} - role id for timout
+
+Using the databsae
+
+insert
+data[key] = value // insert_data(key, value)
+
+remove
+delete_data(key)
+
+get
+get_data(key) // data[key]
+
+list all keys - not recommended
+list_all_keys()
+
+list all keys with prefix
+list_all_keys_with_prefix(prefix)
+
+
+if you want the command to only be usable by moderators.
+```
+  if not developer_check(interaction.user.id):
+    return await interaction.response.send_message('You need to be a cyklerbot developer to use this command.', ephemeral=True)
+```
+
+if you want the command to only be usable by listed developers.
+```
+  if not developer_check(interaction.user.id):
+      return await interaction.response.send_message('You need to be a cyklerbot developer to use this command.', ephemeral=True)
+```
+
+most command will be found in a cog, cogs are contained in the cog folder as python files.
+
+here is an example command
+```
+@app_commands.command(name='example_command', description = 'This is an example description')
+@app_commands.choices(choices=[
+    app_commands.Choice(name='tiem2', value='item1'),
+    app_commands.Choice(name='item1', value='item2'),
+])  
+@app_commands.describe(arg1 = 'description for first argument')
+@app_commands.describe(arg2 = 'description for second argument')
+@app_commands.describe(choices = 'description for third argument')
+async def examplecommand(self, interaction: discord.Interaction, arg1: str, arg2: str | None, choices: app_commands.Choice[str]):
+    #to acess choices you need to do choices.value()
+    #you can put ephemeral=True to make the message only visible to the user
+    
+    embed = discord.Embed(color = random.choice(rcolor), title='Title', description='Desc')
+    embed.add_field(name=f'Title', value=f'Value', inline=False)
+    await interaction.channel.send(embed=embed)
+    
+    await interaction.response.send_message(f'Pong! {round(self.client.latency * 1000)}ms')
+```
+
+everything you need is in the file you should have been given.
